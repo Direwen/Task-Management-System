@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="space-y-6">
+        <!-- Task List (for debugging, showing raw tasks) -->
+        <div class="text-gray-900 dark:text-gray-100">
+            <h2 class="text-xl font-semibold mb-4">Tasks</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200 dark:bg-gray-700">
+                            <th class="p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Title</th>
+                            <th class="p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Status</th>
+                            <th class="p-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr class="border-b dark:border-gray-600">
+                            <td class="p-3 text-gray-900 dark:text-gray-100">{{ task.title }}</td>
+                            <td class="p-3 text-gray-900 dark:text-gray-100">{{ task.get_status_display }}</td>
+                            <td class="p-3 text-gray-900 dark:text-gray-100">{{ task.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="p-3 text-center text-gray-500 dark:text-gray-400">No tasks available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex flex-wrap justify-center items-center gap-2 mt-6">
+            <!-- First Page -->
+            <a href="?page=1" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500 {% if tasks.number == 1 %}opacity-50 cursor-not-allowed{% endif %}">
+                First
+            </a>
+
+            <!-- Previous Page -->
+            {% if tasks.has_previous %}
+                <a href="?page={{ tasks.previous_page_number }}" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500">
+                    Previous
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed dark:bg-gray-700 dark:text-gray-400">Previous</span>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for num in tasks.paginator.page_range %}
+                {% if num == tasks.number %}
+                    <span class="px-4 py-2 bg-gray-900 text-white rounded-md font-semibold dark:bg-gray-500">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500">
+                        {{ num }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Next Page -->
+            {% if tasks.has_next %}
+                <a href="?page={{ tasks.next_page_number }}" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500">
+                    Next
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed dark:bg-gray-700 dark:text-gray-400">Next</span>
+            {% endif %}
+
+            <!-- Last Page -->
+            <a href="?page={{ tasks.paginator.num_pages }}" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500 {% if tasks.number == tasks.paginator.num_pages %}opacity-50 cursor-not-allowed{% endif %}">
+                Last
+            </a>
+        </div>
+
+        <!-- Page Info -->
+        <div class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Page {{ tasks.number }} of {{ tasks.paginator.num_pages }} ({{ tasks.paginator.count }} tasks total)
+        </div>
+    </div>
+{% endblock %}

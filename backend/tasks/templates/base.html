@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 2px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: rgb(227, 227, 227); border-radius: 1px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(192, 192, 192); }
+    </style>
+    <title>Task Manager</title>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col lg:h-screen dark:bg-gray-900 dark:text-gray-100">
+
+    <main class="container mx-auto mt-6 mb-6 p-6 bg-white shadow-md rounded-lg flex-grow overflow-auto dark:bg-gray-800 dark:shadow-gray-700">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="text-center text-sm text-gray-600 py-4 flex-shrink-0 dark:text-gray-400">
+        © 2025 Min Sik Hein (Direwen)
+    </footer>
+</body>
+</html>
