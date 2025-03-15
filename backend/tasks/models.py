@@ -27,8 +27,17 @@ class Task(models.Model):
             raise ValidationError("Title must be at least 3 characters long")
         if not value.isalnum():
             raise ValidationError("Title must be alphanumeric")
-            
+        
+    def clean(self):
+        original_record = Task.objects.get(self.pk)
+        if original_record.status == self.DONE_STATUS:
+            raise ValidationError("Cannot update a task that is already done")
+
+        if (self.status is self.DONE_STATUS) and (original_record.status is self.NOT_STARTED_STATUS):
+            raise ValidationError("Status is not allowed to update to 'Done' status")
+
     def save(self, *args, **kwargs):
+        self.full_clean()
         self.title = self.title.strip().lower()
         super().save(*args, **kwargs)
         
