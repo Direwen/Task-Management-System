@@ -1,6 +1,6 @@
 <tr class="border-b dark:border-gray-600">
     <td class="p-3">
-        <input type="checkbox" name="task_ids" value="{{ task.id }}" class="task-checkbox dark:bg-gray-700 dark:border-gray-600" onchange="toggleBulkUpdateButton()">
+        <input type="checkbox" name="task_ids" value="{{ task.id }}" class="task-checkbox dark:bg-gray-700 dark:border-gray-600" onchange="toggleBulkButtons()">  <!-- Fix function name -->
     </td>
     <td class="p-3 text-gray-900 dark:text-gray-100">{{ task.title }}</td>
     <td class="p-3">
@@ -20,5 +20,22 @@
             </select>
         </form>
     </td>
-    <td class="p-3 text-gray-900 dark:text-gray-100">{{ task.created_at|date:"M d, Y" }}</td>
+    <td class="p-3 text-gray-900 dark:text-gray-100 flex items-center space-x-2">
+        {{ task.created_at|date:"M d, Y" }}
+        <form method="post" action="{% url 'delete_task' task.id %}">
+            {% csrf_token %}
+            <button 
+                type="submit" 
+                hx-post="{% url 'delete_task' task.id %}" 
+                hx-target="#task-table-body" 
+                hx-swap="innerHTML" 
+                class="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                title="Delete Task"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </form>
+    </td>
 </tr>

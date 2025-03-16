@@ -17,7 +17,7 @@
                     <select 
                         name="bulk_status" 
                         class="border border-gray-300 rounded-md p-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-gray-400"
-                        onchange="toggleBulkUpdateButton()"
+                        onchange="toggleBulkButtons()"  <!-- Fix function name -->
                     >
                         <option value="" disabled selected>Select Status</option>
                         {% for value, label in status %}
@@ -31,6 +31,19 @@
                         disabled
                     >
                         Bulk Update
+                    </button>
+                    <!-- Bulk Delete Button -->
+                    <button 
+                        type="submit" 
+                        formaction="{% url 'bulk_delete_tasks' %}" 
+                        hx-post="{% url 'bulk_delete_tasks' %}" 
+                        hx-target="#task-table-body" 
+                        hx-swap="innerHTML" 
+                        id="bulk-delete-btn" 
+                        class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors dark:bg-red-500 dark:hover:bg-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        Bulk Delete
                     </button>
                 </div>
 
@@ -101,19 +114,21 @@
         </div>
     </div>
 
-    <!-- JavaScript for Bulk Update -->
+    <!-- JavaScript for Bulk Actions -->
     <script>
         function toggleSelectAll(selectAllCheckbox) {
             const checkboxes = document.querySelectorAll('.task-checkbox');
             checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
-            toggleBulkUpdateButton();
+            toggleBulkButtons();
         }
 
-        function toggleBulkUpdateButton() {
+        function toggleBulkButtons() {
             const checkboxes = document.querySelectorAll('.task-checkbox:checked');
             const bulkStatus = document.querySelector('select[name="bulk_status"]').value;
             const bulkUpdateBtn = document.getElementById('bulk-update-btn');
+            const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
             bulkUpdateBtn.disabled = (checkboxes.length === 0 || !bulkStatus);
+            bulkDeleteBtn.disabled = (checkboxes.length === 0);
         }
     </script>
 {% endblock %}
