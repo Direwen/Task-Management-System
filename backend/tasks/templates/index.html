@@ -17,7 +17,7 @@
                     <select 
                         name="bulk_status" 
                         class="border border-gray-300 rounded-md p-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-gray-400"
-                        onchange="toggleBulkButtons()"  <!-- Fix function name -->
+                        onchange="toggleBulkButtons()"
                     >
                         <option value="" disabled selected>Select Status</option>
                         {% for value, label in status %}
@@ -66,51 +66,6 @@
                     </table>
                 </div>
             </form>
-        </div>
-
-        <!-- Pagination Controls -->
-        <div class="flex flex-wrap justify-center items-center gap-3 mt-6">
-            <a href="?page=1" class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500 {% if tasks.number == 1 %}opacity-50 cursor-not-allowed{% endif %}" title="First Page">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-                </svg>
-            </a>
-            {% if tasks.has_previous %}
-                <a href="?page={{ tasks.previous_page_number }}" class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500" title="Previous Page">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a>
-            {% else %}
-                <span class="px-3 py-2 bg-gray-300 text-gray-500 rounded-full cursor-not-allowed dark:bg-gray-700 dark:text-gray-400" title="Previous Page">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </span>
-            {% endif %}
-            {% if tasks.has_next %}
-                <a href="?page={{ tasks.next_page_number }}" class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500" title="Next Page">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </a>
-            {% else %}
-                <span class="px-3 py-2 bg-gray-300 text-gray-500 rounded-full cursor-not-allowed dark:bg-gray-700 dark:text-gray-400" title="Next Page">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </span>
-            {% endif %}
-            <a href="?page={{ tasks.paginator.num_pages }}" class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500 {% if tasks.number == tasks.paginator.num_pages %}opacity-50 cursor-not-allowed{% endif %}" title="Last Page">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
-                </svg>
-            </a>
-        </div>
-
-        <!-- Page Info -->
-        <div class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Page {{ tasks.number }} of {{ tasks.paginator.num_pages }} ({{ tasks.paginator.count }} tasks total)
         </div>
     </div>
 

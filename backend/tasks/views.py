@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from django.views.generic import ListView
 from .forms import TaskForm
 from .models import Task
 
@@ -16,9 +17,23 @@ def get_paginated_tasks(request, tasks=None):
         "status": Task.STATUS_CHOICES
     }
 
-def tasks_dashboard(request):
-    context = get_paginated_tasks(request)
-    return render(request, "index.html", context)
+class TasksListView(ListView):
+    model = Task
+    template_name = "index.html"
+    context_object_name = "tasks"
+    paginate_by = 5
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["status"] = Task.STATUS_CHOICES
+        return context
+    
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        # If it's an HTMX request and not targeting a specific element, return only the table
+        if request.htmx:
+            return render(request, "partials/table.html", self.get_context_data())
+        return response
 
 def update_task(request, pk):
     task = get_object_or_404(Task, pk=pk)
@@ -54,8 +69,12 @@ def bulk_update_tasks(request):
         valid_tasks = valid_tasks.exclude(status=Task.NOT_STARTED_STATUS)
 
     valid_tasks.update(status=new_status)
-    # Pass all_tasks if less than 5, otherwise fetch all
-    context = get_paginated_tasks(request, all_tasks if len(all_tasks) == 5 else None)
+    
+    view = TasksListView()
+    #To access pagination and query parameters
+    view.setup(request)
+    view.object_list = view.get_queryset()
+    context = view.get_context_data()
     return render(request, "partials/table.html", context)
 
 def bulk_delete_tasks(request):
@@ -67,5 +86,10 @@ def bulk_delete_tasks(request):
         return HttpResponse("Invalid request: No task IDs", status=400)
 
     Task.objects.filter(pk__in=task_ids).delete()
-    context = get_paginated_tasks(request)
+    
+    view = TasksListView()
+    #To access pagination and query parameters
+    view.setup(request)
+    view.object_list = view.get_queryset()
+    context = view.get_context_data()
     return render(request, "partials/table.html", context)
