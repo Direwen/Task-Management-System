@@ -12,8 +12,8 @@
     <td colspan="4">
         <div class="flex flex-wrap justify-center items-center gap-3 mt-6">
             <a 
-                href="?page=1" 
-                hx-get="{% url 'task_list' %}?page=1"
+                href="?page=1{% if search_query %}&description={{ search_query }}{% endif %}" 
+                hx-get="{% url 'task_list' %}?page=1{% if search_query %}&description={{ search_query }}{% endif %}"
                 hx-target="#task-table-body"
                 hx-swap="innerHTML"
                 class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500 {% if page_obj.number == 1 %}opacity-50 cursor-not-allowed{% endif %}" 
@@ -25,8 +25,8 @@
             </a>
             {% if page_obj.has_previous %}
                 <a 
-                    href="?page={{ page_obj.previous_page_number }}" 
-                    hx-get="{% url 'task_list' %}?page={{ page_obj.previous_page_number }}"
+                    href="?page={{ page_obj.previous_page_number }}{% if search_query %}&description={{ search_query }}{% endif %}" 
+                    hx-get="{% url 'task_list' %}?page={{ page_obj.previous_page_number }}{% if search_query %}&description={{ search_query }}{% endif %}"
                     hx-target="#task-table-body"
                     hx-swap="innerHTML"
                     class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500" 
@@ -45,8 +45,8 @@
             {% endif %}
             {% if page_obj.has_next %}
                 <a 
-                    href="?page={{ page_obj.next_page_number }}" 
-                    hx-get="{% url 'task_list' %}?page={{ page_obj.next_page_number }}"
+                    href="?page={{ page_obj.next_page_number }}{% if search_query %}&description={{ search_query }}{% endif %}" 
+                    hx-get="{% url 'task_list' %}?page={{ page_obj.next_page_number }}{% if search_query %}&description={{ search_query }}{% endif %}"
                     hx-target="#task-table-body"
                     hx-swap="innerHTML"
                     class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500" 
@@ -64,8 +64,8 @@
                 </span>
             {% endif %}
             <a 
-                href="?page={{ page_obj.paginator.num_pages }}" 
-                hx-get="{% url 'task_list' %}?page={{ page_obj.paginator.num_pages }}"
+                href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&description={{ search_query }}{% endif %}" 
+                hx-get="{% url 'task_list' %}?page={{ page_obj.paginator.num_pages }}{% if search_query %}&description={{ search_query }}{% endif %}"
                 hx-target="#task-table-body"
                 hx-swap="innerHTML"
                 class="px-3 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors shadow-sm dark:bg-gray-600 dark:hover:bg-gray-500 {% if page_obj.number == page_obj.paginator.num_pages %}opacity-50 cursor-not-allowed{% endif %}" 

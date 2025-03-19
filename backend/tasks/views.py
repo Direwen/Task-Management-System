@@ -23,9 +23,18 @@ class TasksListView(ListView):
     context_object_name = "tasks"
     paginate_by = 5
     
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        title = self.request.GET.get("title", "").strip()
+        print(f"Searching for: {title}")
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["status"] = Task.STATUS_CHOICES
+        context["search_query"] = self.request.GET.get("title", "")
         return context
     
     def get(self, request, *args, **kwargs):

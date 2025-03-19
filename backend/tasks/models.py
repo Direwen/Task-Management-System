@@ -44,5 +44,5 @@ class Task(models.Model):
     class Meta:
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["status", "title"])
+            models.Index(fields=["status", "title"]),
         ]
