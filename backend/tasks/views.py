@@ -3,8 +3,10 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.views.generic import ListView
+from rest_framework import viewsets
 from .forms import TaskForm
 from .models import Task
+from .serializers import *
 
 def get_paginated_tasks(request, tasks=None):
     """Helper function to paginate tasks and build context."""
@@ -102,3 +104,14 @@ def bulk_delete_tasks(request):
     view.object_list = view.get_queryset()
     context = view.get_context_data()
     return render(request, "partials/table.html", context)
+
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    
+    # def get_queryset(self):
+    #     return Task.objects.filter(user=self.request.user)
+    
+    # Override the create method to add the user to the task object before saving (after validation)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
