@@ -4,6 +4,8 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.views.generic import ListView
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from .forms import TaskForm
 from .models import Task
 from .serializers import *
@@ -109,9 +111,27 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     
-    # def get_queryset(self):
-    #     return Task.objects.filter(user=self.request.user)
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
     
     # Override the create method to add the user to the task object before saving (after validation)
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+    
+    @action(detail=False, methods=["post"], url_path="bulk-delete")
+    def bulk_delete(self, request):
+        task_ids = request.data.get('task_ids', [])
+        
+        if not task_ids:
+            return Response(
+                {"error": "No Task Ids are provided"},
+                status=400
+            )
+            
+        tasks = Task.objects.filter(user=request.user, pk__in=task_ids)
+        deleted_count, _ = tasks.delete()
+        
+        return Response(
+            {"message": f"{deleted_count} tasks deleted successfully"},
+            status=200
+        )

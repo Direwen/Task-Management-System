@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from rest_framework import serializers
 
 class Task(models.Model):
     NOT_STARTED_STATUS = "N"
@@ -29,12 +30,14 @@ class Task(models.Model):
             raise ValidationError("Title must be alphanumeric")
         
     def clean(self):
-        original_record = Task.objects.get(self.pk)
-        if original_record.status == self.DONE_STATUS:
-            raise ValidationError("Cannot update a task that is already done")
+        #if the existing record is being updated
+        if self.pk:
+            original_record = Task.objects.get(pk=self.pk)
+            if original_record.status == self.DONE_STATUS:
+                raise serializers.ValidationError("Cannot update a task that is already done")
 
-        if (self.status is self.DONE_STATUS) and (original_record.status is self.NOT_STARTED_STATUS):
-            raise ValidationError("Status is not allowed to update to 'Done' status")
+            if (self.status is self.DONE_STATUS) and (original_record.status is self.NOT_STARTED_STATUS):
+                raise serializers.ValidationError("Status is not allowed to update to 'Done' status")
 
     def save(self, *args, **kwargs):
         self.full_clean()
