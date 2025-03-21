@@ -111,23 +111,54 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     
+    def get_serializer_class(self):
+        # the value of url_path (bulk-update) is automatically turned into bulk_update
+        if self.action == "bulk_update":
+            return BulkUpdateSerializer
+        elif self.action == "bulk_delete":
+            return BulkDeleteSerializer
+        return super().get_serializer_class()
+    
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
     
     # Override the create method to add the user to the task object before saving (after validation)
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+        
+    @action(detail=False, methods=["post"], url_path="bulk-update")
+    def bulk_update(self, request):
+        serializer = BulkUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=400
+            )
+        task_ids = serializer.validated_data["task_ids"]
+        new_status = serializer.validated_data["status"]
+        tasks = Task.objects.filter(user=request.user, pk__in=task_ids)
+        if new_status == Task.DONE_STATUS:
+            tasks = tasks.exclude(status=Task.DONE_STATUS).exclude(status=Task.NOT_STARTED_STATUS)
+        
+        updated_task = tasks.update(status=new_status)
+        
+        return Response(
+            {"message": f"{updated_task} tasks updated successfully"},
+            status=200
+        )
     
+    
+    #If detail=True, it would be instance-level and the URL would be /api/tasks/{id}/bulk-delete/
     @action(detail=False, methods=["post"], url_path="bulk-delete")
     def bulk_delete(self, request):
-        task_ids = request.data.get('task_ids', [])
-        
-        if not task_ids:
+        serializer = BulkDeleteSerializer(data=request.data)
+        if not serializer.is_valid():
             return Response(
-                {"error": "No Task Ids are provided"},
+                serializer.errors,
                 status=400
             )
             
+        task_ids = serializer.validated_data["task_ids"]
         tasks = Task.objects.filter(user=request.user, pk__in=task_ids)
         deleted_count, _ = tasks.delete()
         
